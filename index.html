@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="5.7">
+<meta name="app-ver" content="5.8">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
@@ -241,14 +241,15 @@ header p{font-size:14.5px;margin-top:8px}
   <section class="confirm">
     <strong>확인이 필요한 곳</strong>
     <ul>
-            <li><span class="bd">주황색</span>으로 표시한 경계 인접 도로는 현장에서 한 번 더 확인해 주세요.</li>
+            <li>결과에 <b>“경계 인접 · 현장 확인”</b>이 붙으면 구역 경계 바로 옆이니 현장에서 한 번 더 확인해 주세요.</li>
+            <li>건물명만 넣었을 때 안 나오면 <b>동 이름을 함께</b> 넣어 보세요 (예: 수유동 한일빌딩).</li>
             <li>큰길(도봉로·노해로·덕릉로·동일로 등)은 <b>건물번호 구간</b>으로 행정동을 찾아요. 목록 사이 번호는 가까운 구간으로 추정하고 "구간 추정"으로 표시돼요.</li>
     </ul>
   </section>
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.7 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.8 · 2026.10</footer>
 </div>
 
 <script>
@@ -256,7 +257,7 @@ const Z={
   Z1:{v:"127호",n:"도봉 북부권",c:"--z1",p:"임영민"},
   Z2:{v:"28호",n:"노원 상계권",c:"--z2",p:"최영국"},
   Z3:{v:"160호",n:"중계·하계·공릉권",c:"--z3",p:"박광춘"},
-  Z4:{v:"26호",n:"번동·창3·월계·장위·석관권",c:"--z4",p:"정문재"},
+  Z4:{v:"26호",n:"번동·창3·월계·장위·석관·월곡1권",c:"--z4",p:"정문재"},
   Z5:{v:"27호",n:"수유·우이·번동·창2권",c:"--z5",p:"이수열"},
   OTHER:{v:"타지사",n:"타 지사 관할",c:"--zo"}
 };
@@ -266,7 +267,7 @@ const DONGS=[
  ["도봉구","창4동","Z1"],["도봉구","창5동","Z1"],["도봉구","쌍문2동","Z1"],["도봉구","쌍문4동","Z1",1],
  ["노원구","상계1동","Z2"],["노원구","상계2동","Z2"],["노원구","상계3·4동","Z2"],["노원구","상계5동","Z2"],["노원구","상계6·7동","Z2"],["노원구","상계8동","Z2"],["노원구","상계9동","Z2"],["노원구","상계10동","Z2"],
  ["노원구","중계본동","Z3"],["노원구","중계1동","Z3"],["노원구","중계2·3동","Z3"],["노원구","중계4동","Z2"],["노원구","하계1동","Z3"],["노원구","하계2동","Z3"],["노원구","공릉1동","Z3"],["노원구","공릉2동","Z3"],
- ["강북구","번3동","Z4"],["노원구","월계1동","Z4"],["노원구","월계2동","Z4"],["노원구","월계3동","Z4",1],["성북구","장위1동","Z4"],["성북구","장위2동","Z4"],["성북구","장위3동","Z4",1],["성북구","석관동","Z4",1],
+ ["강북구","번3동","Z4"],["노원구","월계1동","Z4"],["노원구","월계2동","Z4"],["노원구","월계3동","Z4"],["성북구","장위1동","Z4"],["성북구","장위2동","Z4"],["성북구","장위3동","Z4"],["성북구","석관동","Z4"],
  ["강북구","우이동","SPLIT"],["강북구","인수동","Z5"],["강북구","수유1동","Z5"],["강북구","수유2동","Z5"],["강북구","수유3동","Z5"],["강북구","번1동","Z5"],
  ["도봉구","쌍문1동","Z5"],["도봉구","창1동","SPLIT"],["도봉구","창2동","Z5"],["도봉구","창3동","SPLIT"],
  ["도봉구","쌍문3동","SPLIT"],["강북구","번2동","SPLIT"],["강북구","미아동","SPLIT"],
@@ -656,12 +657,12 @@ function lookup(raw){
 
 function addrHtml(res){ const a=res&&res.addr; if(!a) return "";
   const rows=[]; if(a.road) rows.push(["도로명",a.road]); if(a.jibun) rows.push(["지번",a.jibun]); if(a.name) rows.push(["건물명",a.name]);
-  return rows.length?`<dl class="addr">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>${res.addrNote?`<p class="note" style="margin:4px 0 0">입력한 내용 기준이에요. 아래 ‘주소 검색 키’를 넣으면 도로명·지번 주소가 모두 나와요.</p>`:""}`:""; }
+  return rows.length?`<dl class="addr">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>${res.addrNote?`<p class="note" style="margin:4px 0 0">입력한 내용 기준이에요. 주소 검색 키가 승인되면 도로명·지번 주소가 모두 나와요.</p>`:""}`:""; }
 function render(res,raw){
   const el=$("result");
   if(!res){el.innerHTML="";return}
   if(res.none){
-    el.innerHTML=`<div class="badge none"><div class="num">미확인</div></div><div class="detail"><h2>${esc(raw)}</h2><ul class="why">${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>${addrHtml(res)}<span class="pill">관리구역 외일 수 있어요</span></div>`;
+    el.innerHTML=`<div class="badge none"><div class="num">미확인</div></div><div class="detail"><h2>${esc(raw)}</h2><ul class="why">${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>${addrHtml(res)}<span class="pill">동 이름이나 도로명을 함께 넣어 보세요</span></div>`;
     return;
   }
   if(res.choose){
@@ -709,12 +710,14 @@ async function onlineLookup(raw){
 // ── 행정안전부 도로명주소 검색 API (키가 있을 때) ──
 // 근무자 공용 주소 검색 키 (받으면 여기에 넣음)
 const DEFAULT_JUSO_KEY="U01TX0FVVEgyMDI2MTAyODE2MTkwNjEyMDg5Nzc=";
+function keyNote(){ const el=document.getElementById("jkmsg"); if(el&&JUSO_BAD) el.textContent="주소 검색 키 상태: "+JUSO_BAD+" (승인되면 자동으로 다시 작동해요)"; }
 const LS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-function jusoKey(){ return LS.get("jusoKey")||DEFAULT_JUSO_KEY; }
+let JUSO_BAD=""; try{JUSO_BAD=sessionStorage.getItem("jusoBad")||""}catch(e){}
+function jusoKey(){ if(JUSO_BAD) return ""; return LS.get("jusoKey")||DEFAULT_JUSO_KEY; }
 function jusoSearch(q){ const key=jusoKey(); if(!key) return Promise.resolve(null);
   return new Promise(res=>{ const cb="jcb"+Date.now()+Math.floor(Math.random()*1e4); const sc=document.createElement("script");
     const done=v=>{try{delete window[cb]}catch(e){} sc.remove(); res(v)}; const tm=setTimeout(()=>done({err:true}),7000);
-    window[cb]=d=>{clearTimeout(tm); const r=d&&d.results; if(!r||r.common.errorCode!=="0") return done({err:true,msg:r&&r.common.errorMessage}); done({list:r.juso||[]});};
+    window[cb]=d=>{clearTimeout(tm); const r=d&&d.results; if(!r||r.common.errorCode!=="0"){ const m=r&&r.common.errorMessage; if(m&&/KEY|승인|인증/i.test(m)){ JUSO_BAD=m; try{sessionStorage.setItem("jusoBad",m)}catch(e){} keyNote(); } return done({err:true,msg:m}); } done({list:r.juso||[]});};
     sc.onerror=()=>{clearTimeout(tm);done({err:true})};
     sc.src="https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do?confmKey="+encodeURIComponent(key)+"&currentPage=1&countPerPage=10&resultType=json&hstryYn=N&callback="+cb+"&keyword="+encodeURIComponent(q);
     document.head.appendChild(sc); }); }
@@ -755,14 +758,14 @@ async function search(){ clearTimeout(_t); const v=$("q").value; let res=lookup(
     render({choose:[],why:["주소 검색 중…"]},v.trim());
     const j=await jusoLookup(v);
     if(j&&!j.err){ if(!j.none||!res||res.none) res=j; else res.addr=j.addr; }
-    else if(j&&j.err&&res&&!res.none) res.why=[...res.why,`(주소 검색 연결 실패${j.msg?": "+esc(j.msg):""} — 도로명·지번 표시는 생략)`];
+    else if(j&&j.err&&res&&!res.none&&!(j.msg&&/KEY|승인|인증/i.test(j.msg))) res.why=[...res.why,"(주소 검색 연결 실패 — 도로명·지번 표시는 생략)"];
     else if(j&&j.err&&j.msg) window._jusoErr=j.msg;
   }
   if(res&&res.none&&v.trim().length>=2){
     render({choose:[],why:["목록에 없는 명칭이라 지도에서 찾는 중…"]},v.trim());
     const o=await onlineLookup(v);
     if(o&&!o.err) res=o;
-    else res={none:true,why:[o&&o.err?(window._jusoErr?"주소 검색 오류: "+esc(window._jusoErr)+" · ":"")+"지도 검색에 연결하지 못했어요(인터넷 연결 또는 미리보기 화면 제한). 동 이름을 함께 넣어 보세요 (예: 수유동 한일빌딩).":(window._jusoErr?"주소 검색 오류: "+esc(window._jusoErr)+" · ":"")+"찾지 못했어요. 동 이름을 함께 넣거나(예: 수유동 한일빌딩) 도로명 주소로 입력해 주세요."]};
+    else res={none:true,why:[o&&o.err?(JUSO_BAD?"건물명만으로 찾으려면 주소 검색 키 승인이 필요해요. · ":"")+"지도 검색에 연결하지 못했어요(인터넷 연결 또는 미리보기 화면 제한). 동 이름을 함께 넣어 보세요 (예: 수유동 한일빌딩).":(JUSO_BAD?"건물명만으로 찾으려면 주소 검색 키 승인이 필요해요. · ":"")+"찾지 못했어요. 동 이름을 함께 넣거나(예: 수유동 한일빌딩) 도로명 주소로 입력해 주세요."]};
   }
   if(res&&!res.addr){ const n=norm(v), a={}; const pm=parseMain(n), pg=parseGil(n), lm=findLandmark(v);
     if(pg){ const k=norm(pg.name); const mm=n.slice(n.indexOf(k)+k.length).match(/^(\d+(?:-\d+)?)/); a.road=pg.name+(mm?" "+mm[1]:""); }
