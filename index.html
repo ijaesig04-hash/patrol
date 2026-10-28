@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="5.3">
+<meta name="app-ver" content="5.4">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
@@ -175,6 +175,7 @@ header p{font-size:14.5px;margin-top:8px}
   .badge .num{font-size:44px}
 }
 
+[hidden]{display:none!important}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .tools{display:flex;gap:6px}
 .tool{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:700;box-shadow:0 2px 6px rgba(15,30,60,.06)}
@@ -247,7 +248,7 @@ header p{font-size:14.5px;margin-top:8px}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.3 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.4 · 2026.10</footer>
 </div>
 
 <script>
@@ -799,19 +800,27 @@ $("cpurl").onclick=async()=>{ try{ if(navigator.share&&/Android|iPhone|iPad/i.te
   const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
   const web=/^https?:/.test(location.protocol);
   if(web&&"serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
-  if(standalone||!web) return;
+  const LSI={get(){try{return localStorage.getItem("pwaInstalled")==="1"}catch(e){return false}},set(v){try{v?localStorage.setItem("pwaInstalled","1"):localStorage.removeItem("pwaInstalled")}catch(e){}}};
+  if(standalone){ LSI.set(true); return; }
+  if(!web) return;
+  const hideAll=()=>{ $("inst").hidden=true; $("ibar").hidden=true; };
   let dismissed=false; try{dismissed=localStorage.getItem("ibx")==="1"}catch(e){}
   let deferred=null;
   const show=()=>{ $("inst").hidden=false; if(!dismissed) $("ibar").hidden=false; };
-  window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferred=e; show(); });
-  const go=async()=>{ if(deferred){ deferred.prompt(); const r=await deferred.userChoice; deferred=null; if(r.outcome==="accepted"){ $("ibar").hidden=true; $("inst").hidden=true; toast("설치했어요. 홈 화면에서 열어보세요"); } }
+  // 설치 안 된 상태에서만 브라우저가 이 신호를 보냄 → 삭제하면 다시 옴
+  window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferred=e; LSI.set(false); show(); });
+  const go=async()=>{ if(deferred){ deferred.prompt(); const r=await deferred.userChoice; deferred=null; if(r.outcome==="accepted"){ LSI.set(true); hideAll(); toast("설치했어요. 홈 화면에서 열어보세요"); } }
     else if(isIOS){ toast("아래 공유 버튼 → ‘홈 화면에 추가’를 눌러주세요"); }
     else { toast("브라우저 메뉴(⋮) → ‘홈 화면에 추가’ 또는 ‘앱 설치’를 눌러주세요"); } };
   $("inst").onclick=go; $("ibgo").onclick=go;
   $("ibx").onclick=()=>{ $("ibar").hidden=true; try{localStorage.setItem("ibx","1")}catch(e){} };
   if(isIOS){ $("ibtxt").textContent="사파리 아래 공유 버튼 → ‘홈 화면에 추가’를 누르면 앱처럼 쓸 수 있어요."; $("ibgo").textContent="방법"; show(); }
-  else setTimeout(()=>{ if(!deferred){ $("inst").hidden=false; if(!dismissed){ $("ibtxt").textContent="브라우저 메뉴(⋮) → ‘홈 화면에 추가’로 설치할 수 있어요."; $("ibgo").textContent="방법"; $("ibar").hidden=false; } } },2500);
-  window.addEventListener("appinstalled",()=>{ $("ibar").hidden=true; $("inst").hidden=true; });
+  else setTimeout(async()=>{ if(deferred) return;
+    let inst=LSI.get();
+    try{ if(navigator.getInstalledRelatedApps){ const apps=await navigator.getInstalledRelatedApps(); if(apps.length){ inst=true; LSI.set(true); } } }catch(e){}
+    if(inst){ hideAll(); return; }
+    if(!deferred){ $("inst").hidden=false; if(!dismissed){ $("ibtxt").textContent="브라우저 메뉴(⋮) → ‘홈 화면에 추가’로 설치할 수 있어요."; $("ibgo").textContent="방법"; $("ibar").hidden=false; } } },2500);
+  window.addEventListener("appinstalled",()=>{ LSI.set(true); hideAll(); });
 })();
 // 새 버전이 올라오면 자동으로 최신 화면으로 바꿈 (같은 주소 그대로)
 (function(){ const cur=(document.querySelector('meta[name="app-ver"]')||{}).content; if(!cur||location.protocol==="file:") return;
