@@ -2,7 +2,7 @@
   "meta": {
     "title": "에스원 출동차량 관리구역 매핑 (초안)",
     "source": "지사 벽면 관리구역 지도(빨간 경계선) 사진 6장 재대조 + 도로명주소 목록",
-    "version": "2.8",
+    "version": "2.9",
     "created": "2026-10-27",
     "basis": "행정동 단위 (경계선이 동 중간을 지나는 곳은 confidence로 표시)",
     "confidence_legend": {
