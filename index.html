@@ -2,21 +2,21 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="5.0">
+<meta name="app-ver" content="5.1">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>출동차량 구역 조회</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 /* Layout: 상단 조회창 + 결과 카드(차량번호 크게) → 구역별 담당 동 → 분할 동 도로표 → 확인 필요 사항 */
 :root{
   --bg:#f3f5f8; --panel:#ffffff; --ink:#152033; --muted:#5d6879; --line:#dde2ea; --soft:#eaeef4;
   --accent:#1f4fd1; --accent-ink:#ffffff; --warn:#b4620a; --warn-bg:#fdf1e2; --ok:#1d7a4c;
   --glass:rgba(255,255,255,.93);--z1:#2563eb; --z2:#0e8f86; --z3:#7c3aed; --z4:#d9620f; --z5:#16a34a; --zo:#7a8494; --zx:#c0396b;
-  --f-display:"Black Han Sans","IBM Plex Sans KR",sans-serif;
-  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-display:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -125,6 +125,44 @@ header p,.legend span,footer{color:rgba(255,255,255,.88)}
   .badge .num{font-size:46px}
 }
 @media (prefers-reduced-motion:no-preference){.result{transition:box-shadow .2s}}
+
+/* ── 디자인 정리 (v5.1) ── */
+:root{--radius:18px;--brand:#e3242b;--shadow:0 10px 30px rgba(2,8,23,.28),0 2px 6px rgba(2,8,23,.18)}
+.wrap{gap:22px;max-width:760px}
+.hero{border-radius:var(--radius);box-shadow:var(--shadow)}
+header h1{font-weight:900;font-size:clamp(28px,7vw,40px);letter-spacing:-.02em;margin-top:6px}
+header p{font-size:14.5px;margin-top:8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:rgba(255,255,255,.92);text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.eyebrow .s1{background:var(--brand);color:#fff;border-radius:6px;padding:2px 7px;font-size:11.5px;letter-spacing:.06em;text-shadow:none}
+.legend{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:16px}
+.tm{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:9px 6px 8px;text-align:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);position:relative;overflow:hidden;min-width:0}
+.tm::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--zc)}
+.tm b{display:block;font-size:17px;font-weight:900;color:#fff;letter-spacing:-.01em}
+.tm span{display:block;font-size:13px;font-weight:700;color:#fff;margin-top:2px;white-space:nowrap}
+.legend .tm i{width:auto;height:auto;border-radius:0;background:none;display:block;font-style:normal;font-size:10px;color:rgba(255,255,255,.72);letter-spacing:.02em}
+.legend{gap:6px}
+@media (max-width:360px){.tm span{font-size:12px}.tm b{font-size:15px}}
+.search,.result,.more{border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.35)}
+.search{padding:18px 18px 20px}
+.search label{font-size:12px;letter-spacing:.12em}
+#q{border-radius:12px;font-size:16.5px;padding:14px 15px}
+.go{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:0 18px;font-size:15.5px;box-shadow:0 6px 14px rgba(31,79,209,.35)}
+.go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.result{grid-template-columns:200px 1fr}
+.badge{background:linear-gradient(150deg,color-mix(in srgb,var(--zc,var(--zo)) 88%,#fff 12%),color-mix(in srgb,var(--zc,var(--zo)) 80%,#000 20%));gap:10px}
+.badge .num{font-weight:900;font-size:58px;letter-spacing:-.03em}
+.cons{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px 5px 9px;font-size:13.5px;font-weight:700;white-space:nowrap}
+.cons svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2.2}
+.detail h2{font-size:18px;font-weight:900;letter-spacing:-.01em}
+.choice em{font-style:normal;font-weight:500;font-size:12.5px;color:var(--ink)}
+.zone .hd{align-items:center}
+.zone .v{font-weight:900;font-size:24px}
+.zone .pp{font-size:12.5px;font-weight:700;color:var(--zc);background:color-mix(in srgb,var(--zc) 12%,transparent);border-radius:999px;padding:3px 9px}
+@media (max-width:640px){
+  .result{grid-template-columns:1fr}
+  .badge{flex-direction:row;justify-content:space-between;align-items:center;padding:16px 18px;min-height:auto}
+  .badge .num{font-size:44px}
+}
 </style>
 </head>
 <body>
@@ -133,16 +171,17 @@ header p,.legend span,footer{color:rgba(255,255,255,.88)}
 <div class="wrap">
   <div class="hero" role="img" aria-label="에스원 북서울지사 출동차량"></div>
   <header>
+    <div class="eyebrow"><span class="s1">S-1</span>에스원 북서울지사</div>
     <h1>출동차량 구역 조회</h1>
-    <p>주소를 입력하면 담당 출동차량을 자동으로 찾아요. 행정동, 법정동, 도로명 주소 모두 됩니다.</p>
+    <p>주소·지번·건물명을 입력하면 담당 출동차량과 컨설턴트를 바로 찾아드려요.</p>
     <div class="legend" id="legend"></div>
   </header>
 
   <form class="search" id="f" autocomplete="off">
-    <label for="q">주소 입력</label>
+    <label for="q">주소 검색</label>
     <div class="row">
       <input id="q" type="text" placeholder="주소·지번·건물명 (예: 도봉로 811)" aria-label="주소">
-      <button class="go" type="button" id="go">조회</button>
+      <button class="go" type="button" id="go"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>조회</span></button>
     </div>
   </form>
 
@@ -178,16 +217,16 @@ header p,.legend span,footer{color:rgba(255,255,255,.88)}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.0 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.1 · 2026.10</footer>
 </div>
 
 <script>
 const Z={
-  Z1:{v:"127호",n:"도봉 북부권",c:"--z1"},
-  Z2:{v:"28호",n:"노원 상계권",c:"--z2"},
-  Z3:{v:"160호",n:"중계·하계·공릉권",c:"--z3"},
-  Z4:{v:"26호",n:"번동·창3·월계·장위·석관권",c:"--z4"},
-  Z5:{v:"27호",n:"수유·우이·번동·창2권",c:"--z5"},
+  Z1:{v:"127호",n:"도봉 북부권",c:"--z1",p:"임영민"},
+  Z2:{v:"28호",n:"노원 상계권",c:"--z2",p:"최영국"},
+  Z3:{v:"160호",n:"중계·하계·공릉권",c:"--z3",p:"박광춘"},
+  Z4:{v:"26호",n:"번동·창3·월계·장위·석관권",c:"--z4",p:"정문재"},
+  Z5:{v:"27호",n:"수유·우이·번동·창2권",c:"--z5",p:"이수열"},
   OTHER:{v:"타지사",n:"타 지사 관할",c:"--zo"}
 };
 // 행정동 → 구역 (check: 확인 권장)
@@ -335,6 +374,7 @@ const GA_OBS=[["노해로",62,"창1동"],["노해로",57,"쌍문2동"],["노해�
  ["중계로",2,"중계본동"],["중계로",10,"중계본동"],["중계로",12,"중계본동"],["동일로",182,"공릉1동"],["동일로",177,"공릉1동"],["동일로",172,"묵1동"],["공릉로",32,"공릉2동"],["공릉로",16,"묵1동"],["공릉로",12,"묵1동"],["동일로",213,"상계6·7동"],["동일로",214,"상계6·7동"],["동일로",221,"상계10동"],["동일로",227,"상계8동"],["동일로",228,"상계9동"],["동일로",230,"상계1동"],["장월로",2,"장위2동"]];
 const DGU=Object.fromEntries(DONGS.map(d=>[d[1],d[0]]));
 const MR_NAMES=[...new Set(MR.map(x=>x[0]))].sort((a,b)=>b.length-a.length);
+const cons=k=>Z[k]&&Z[k].p?`${Z[k].p} 컨설턴트`:"";
 const norm=s=>s.replace(/\s+/g,"").replace(/([가-힣])제(\d)/g,"$1$2").replace(/[.,ㆍ・]/g,"·");
 const $=id=>document.getElementById(id);
 const zv=z=>`var(${Z[z].c})`;
@@ -596,17 +636,17 @@ function render(res,raw){
   if(res.choose){
     el.innerHTML=`<div class="badge none"><div class="num">선택</div><div class="zid">${res.choose.map(c=>Z[c[0]].v).filter((x,i,a)=>a.indexOf(x)===i).join(" / ")}</div></div>
     <div class="detail"><h2>${esc(raw)}</h2><ul class="why">${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>
-    ${addrHtml(res)}<div class="choices">${res.choose.map((c,i)=>`<button class="choice" type="button" data-i="${i}" style="--zc:${zv(c[0])}"><strong>${Z[c[0]].v}</strong><small>${c[1]}</small></button>`).join("")}</div></div>`;
+    ${addrHtml(res)}<div class="choices">${res.choose.map((c,i)=>`<button class="choice" type="button" data-i="${i}" style="--zc:${zv(c[0])}"><strong>${Z[c[0]].v}${Z[c[0]].p?`<em> · ${Z[c[0]].p} 컨설턴트</em>`:""}</strong><small>${c[1]}</small></button>`).join("")}</div></div>`;
     el.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const c=res.choose[+b.dataset.i];
       render({zone:c[0],addr:res.addr,why:[...res.why.slice(0,-1),`선택: <b>${c[1]}</b>`],flag:/확인/.test(c[1])?"확인 필요":null},raw)});
     return;
   }
   const z=Z[res.zone];
-  el.innerHTML=`<div class="badge" style="--zc:${zv(res.zone)}"><div class="num">${z.v}</div>${res.zone==="OTHER"?`<div class="zid">타 지사</div>`:""}</div>
+  el.innerHTML=`<div class="badge" style="--zc:${zv(res.zone)}"><div class="num">${z.v}</div>${res.zone==="OTHER"?`<div class="zid">타 지사</div>`:`<div class="cons"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span>${cons(res.zone)}</span></div>`}</div>
    <div class="detail"><h2>${z.n}</h2><ul class="why"><li>입력: <b>${esc(raw)}</b></li>${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>
    ${addrHtml(res)}<div>${res.flag?`<span class="pill warn">${res.flag}</span>`:`<span class="pill ok">자동 선택됨</span>`}</div>
    <button class="copy" type="button" id="cp">결과 복사</button></div>`;
-  $("cp").onclick=async()=>{const t=`${z.v} (${z.n}) - ${raw}`;try{await navigator.clipboard.writeText(t);$("cp").textContent="복사됨"}catch(e){$("cp").textContent=t}};
+  $("cp").onclick=async()=>{const t=`${z.v}${z.p?" · "+z.p+" 컨설턴트":""} (${z.n}) - ${raw}`;try{await navigator.clipboard.writeText(t);$("cp").textContent="복사됨"}catch(e){$("cp").textContent=t}};
 }
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -695,13 +735,13 @@ $("q").addEventListener("keydown",e=>{if(e.key==="Enter"||e.keyCode===13){e.prev
 $("q").addEventListener("input",()=>{clearTimeout(_t);_t=setTimeout(()=>{const v=$("q").value;if(v.trim().length>=3){const r=lookup(v); if(r&&!r.none) render(r,v.trim());}},400)});
 
 // legend, examples
-$("legend").innerHTML=Object.entries(Z).map(([k,z])=>`<span><i style="background:${zv(k)}"></i>${z.v}</span>`).join("");
+$("legend").innerHTML=["Z4","Z5","Z2","Z1","Z3"].map(k=>{const z=Z[k];return `<div class="tm" style="--zc:${zv(k)}"><b>${z.v}</b><span>${z.p}</span><i>컨설턴트</i></div>`}).join("");
 
 // zones
 $("zones").innerHTML=["Z1","Z2","Z3","Z4","Z5","OTHER"].map(k=>{
   const list=DONGS.filter(d=>d[2]===k).map(d=>`<button type="button" class="dchip${d[3]?" check":""}" data-q="${d[0]} ${d[1]}">${d[1]}</button>`);
   Object.entries(SPLIT_IN).forEach(([dn,zs])=>{if(zs.includes(k)) list.push(`<button type="button" class="dchip split" data-q="${dn}">${dn} 일부</button>`)});
-  return `<div class="zone" style="--zc:${zv(k)}"><div class="hd"><span class="v">${Z[k].v}</span></div><div class="n">${Z[k].n}</div><div class="dlist">${list.join("")}</div></div>`;
+  return `<div class="zone" style="--zc:${zv(k)}"><div class="hd"><span class="v">${Z[k].v}</span>${Z[k].p?`<span class="pp">${Z[k].p} 컨설턴트</span>`:""}</div><div class="n">${Z[k].n}</div><div class="dlist">${list.join("")}</div></div>`;
 }).join("");
 document.querySelectorAll(".dchip").forEach(b=>b.onclick=()=>{run(b.dataset.q);window.scrollTo({top:0,behavior:"smooth"})});
 
