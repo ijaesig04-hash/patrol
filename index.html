@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="5.6">
+<meta name="app-ver" content="5.7">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
@@ -248,7 +248,7 @@ header p{font-size:14.5px;margin-top:8px}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.6 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.7 · 2026.10</footer>
 </div>
 
 <script>
@@ -347,7 +347,7 @@ const R={
  미아동:{
   line:"솔매로(롯데마트 삼양점 앞 사거리→미아역→도봉로 건너 계속)가 경계: 진행방향 왼쪽(북쪽·홀수번) 27호 / 오른쪽(남쪽·짝수번) 타지사 22호. 큰 틀은 오패산터널 서쪽 → 미아역 남쪽(도봉로53·54길) → 삼양역 바로 남쪽 → 삼양동주민센터 앞 → 솔샘 쪽. 북쪽(미아동주민센터·신일고·북서울자이폴라리스·미아래미안1차·삼양역) 27호 / 남쪽(삼양동·화계초·솔샘고) 타 지사",
   roads:[
-   ["덕릉로28길","Z5"],["덕릉로30길","Z5"],["덕릉로32길","Z5"],["도봉로55길","Z5"],["도봉로57길","Z5"],["도봉로59길","Z5"],["도봉로61길","Z5"],["도봉로63길","Z5"],
+   ["덕릉로","Z5"],["덕릉로28길","Z5"],["덕릉로30길","Z5"],["덕릉로32길","Z5"],["도봉로55길","Z5"],["도봉로57길","Z5"],["도봉로59길","Z5"],["도봉로61길","Z5"],["도봉로63길","Z5"],
    ["도봉로65길","Z5"],["도봉로66길","Z5"],["도봉로67길","Z5"],["도봉로67가길","Z5"],["도봉로67나길","Z5"],["도봉로67다길","Z5"],["도봉로68길","Z5"],
    ["도봉로72길","Z5"],["도봉로76길","Z5"],["도봉로78길","Z5"],["오패산로52사길","Z5",1],
    ["솔매로35길","Z5"],["솔매로37길","Z5"],["솔매로39길","Z5"],["솔매로41길","Z5"],["솔매로43길","Z5"],["솔매로45길","Z5"],["솔매로47길","Z5"],["솔매로49길","Z5"],["솔매로51길","Z5"],["솔매로53길","Z5"],["솔매로40길","OTHER"],["솔매로44길","OTHER"],["솔매로46길","OTHER"],
@@ -642,7 +642,7 @@ function lookup(raw){
   for(const n of MR_NAMES){ if(s.includes(norm(n))){const r=roadZones(n,s,null,[`도로 <b>${n}</b> (건물번호 없음)`]); if(r) return r;}}
   // 관리구역 밖 지역
   if(s.includes("월곡로")) return {choose:[["Z4","월곡1동 쪽 (동덕여대·월곡초·장위중 쪽)"],["OTHER","월곡2동 쪽 (월곡역·상월곡역 남쪽)"]],why:["도로 <b>월곡로</b>: 월곡1동(26호)과 월곡2동(타지사)에 걸쳐 있어요."],flag:"위치 선택"};
-  const IN_ROADS={장위로:"Z4",장월로:"Z4",석계로:"Z4",돌곶이로:"Z4",광운로:"Z4",초안산로:"Z4"};
+  const IN_ROADS={석관로:"Z4",장위로:"Z4",장월로:"Z4",석계로:"Z4",돌곶이로:"Z4",광운로:"Z4",초안산로:"Z4"};
   const irr=Object.keys(IN_ROADS).find(a=>s.includes(a)); if(irr) return {zone:IN_ROADS[irr],why:[`도로 <b>${irr}</b> → ${Z[IN_ROADS[irr]].n}`],flag:"도로 기준 · 확인 권장"};
   const orr=OTHER_ROADS.find(a=>s.includes(a));
   if(orr) return {zone:"OTHER",why:[`도로 <b>${orr}</b> → 관리구역 밖 도로`],flag:"구역 밖 도로 · 확인 권장"};
@@ -669,7 +669,7 @@ function render(res,raw){
     <div class="detail"><h2>${esc(raw)}</h2><ul class="why">${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>
     ${addrHtml(res)}<div class="choices">${res.choose.map((c,i)=>`<button class="choice" type="button" data-i="${i}" style="--zc:${zv(c[0])}"><strong>${Z[c[0]].v}${Z[c[0]].p?`<em> · ${Z[c[0]].p} 컨설턴트</em>`:""}</strong><small>${c[1]}</small></button>`).join("")}</div></div>`;
     el.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const c=res.choose[+b.dataset.i];
-      render({zone:c[0],addr:res.addr,why:[...res.why.slice(0,-1),`선택: <b>${c[1]}</b>`],flag:/확인/.test(c[1])?"확인 필요":null},raw)});
+      render({zone:c[0],addr:c[2]||res.addr,why:[...res.why.slice(0,-1),`선택: <b>${c[1]}</b>`],flag:/확인/.test(c[1])?"확인 필요":null},raw)});
     return;
   }
   const z=Z[res.zone];
@@ -721,17 +721,29 @@ function jusoSearch(q){ const key=jusoKey(); if(!key) return Promise.resolve(nul
 const AREA_GU=["도봉구","노원구","강북구","성북구","중랑구"];
 async function jusoLookup(raw){
   const qs=[...new Set([raw.trim(),canonName(raw.trim()),expandName(raw.trim())])];
+  const n=norm(raw); const guF=AREA_GU.find(g=>n.includes(g)); const dongF=Object.keys(LEGAL).find(x=>n.includes(x));
   for(const q of qs){ const r=await jusoSearch(q); if(!r) return null; if(r.err) return r;
-    const list=r.list.filter(j=>j.siNm==="서울특별시"&&AREA_GU.includes(j.sggNm)).concat(r.list.filter(j=>!(j.siNm==="서울특별시"&&AREA_GU.includes(j.sggNm))));
-    const j=list[0]; if(!j) continue;
-    const num=j.buldMnnm+(+j.buldSlno>0?"-"+j.buldSlno:"");
-    const inArea=j.siNm==="서울특별시"&&AREA_GU.includes(j.sggNm);
-    const addr={road:j.roadAddr,jibun:j.jibunAddr,name:j.bdNm||""};
-    if(!inArea) return {zone:"OTHER",addr,why:[`주소 검색: ${esc(j.sggNm)} → 관리구역 밖`],flag:null};
-    let res=lookup(`${j.bdNm||""} ${j.sggNm} ${j.hemdNm||""} ${j.rn} ${num}`);
-    if(!res||res.none) res=lookup(`${j.sggNm} ${j.emdNm} ${j.lnbrMnnm}${+j.lnbrSlno>0?"-"+j.lnbrSlno:""} ${j.rn} ${num}`);
-    if(res&&!res.none){ res.addr=addr; res.why=[`주소 검색으로 위치 확인${j.hemdNm?` (행정동 ${esc(j.hemdNm)})`:""}`,...res.why]; return res; }
-    return {none:true,addr,why:["주소는 찾았지만 구역 규칙에 없는 곳이에요."]};
+    let list=r.list.filter(j=>j.siNm==="서울특별시"&&AREA_GU.includes(j.sggNm));
+    if(guF) list=list.filter(j=>j.sggNm===guF);
+    if(dongF) list=list.filter(j=>norm(j.emdNm||"")===dongF||list.length===0);
+    if(!list.length){ const j=r.list[0]; if(!j) continue;
+      return {zone:"OTHER",addr:{road:j.roadAddr,jibun:j.jibunAddr,name:j.bdNm||""},why:[`주소 검색: ${esc(j.siNm+" "+j.sggNm)} → 관리구역 밖`],flag:null}; }
+    const seen=new Set(), out=[];
+    for(const j of list){ if(seen.has(j.roadAddr)) continue; seen.add(j.roadAddr);
+      const num=j.buldMnnm+(+j.buldSlno>0?"-"+j.buldSlno:"");
+      let res=lookup(`${j.bdNm||""} ${j.sggNm} ${j.hemdNm||""} ${j.rn} ${num}`);
+      if(!res||res.none||res.choose) { const r2=lookup(`${j.sggNm} ${j.hemdNm||""} ${j.rn} ${num}`); if(r2&&!r2.none&&(!res||res.none||(r2.zone&&res.choose))) res=r2; }
+      if(!res||res.none) res=lookup(`${j.sggNm} ${j.emdNm} ${j.lnbrMnnm}${+j.lnbrSlno>0?"-"+j.lnbrSlno:""}`);
+      out.push({j,res,addr:{road:j.roadAddr,jibun:j.jibunAddr,name:j.bdNm||""}});
+      if(out.length>=8) break; }
+    const ok=out.filter(o=>o.res&&!o.res.none);
+    if(!ok.length) return {none:true,addr:out[0]&&out[0].addr,why:["주소는 찾았지만 구역 규칙에 없는 곳이에요."]};
+    if(ok.length===1||new Set(ok.map(o=>o.res.zone||"?")).size===1&&ok[0].res.zone){
+      const o=ok[0]; o.res.addr=o.addr; o.res.why=[`주소 검색으로 위치 확인${o.j.hemdNm?` (행정동 ${esc(o.j.hemdNm)})`:""}${ok.length>1?` · 같은 이름 ${ok.length}곳 모두 같은 차량`:""}`,...o.res.why]; return o.res; }
+    const ch=[];
+    ok.forEach(o=>{ const label=`${o.j.bdNm?o.j.bdNm+" · ":""}${o.j.roadAddr.replace(/^서울특별시\s*/,"")}`;
+      if(o.res.zone) ch.push([o.res.zone,label,o.addr]); else (o.res.choose||[]).forEach(c=>ch.push([c[0],label+" · "+c[1],o.addr])); });
+    return {choose:ch,addr:ok[0].addr,why:[`주소 검색: 같은 이름이 관할 안에 ${ok.length}곳 있어요. 맞는 곳을 골라주세요.`],flag:"위치 선택"};
   }
   return null;
 }
@@ -743,13 +755,14 @@ async function search(){ clearTimeout(_t); const v=$("q").value; let res=lookup(
     render({choose:[],why:["주소 검색 중…"]},v.trim());
     const j=await jusoLookup(v);
     if(j&&!j.err){ if(!j.none||!res||res.none) res=j; else res.addr=j.addr; }
-    else if(j&&j.err&&res&&!res.none) res.why=[...res.why,"(주소 검색 연결 실패 — 도로명·지번 표시는 생략)"];
+    else if(j&&j.err&&res&&!res.none) res.why=[...res.why,`(주소 검색 연결 실패${j.msg?": "+esc(j.msg):""} — 도로명·지번 표시는 생략)`];
+    else if(j&&j.err&&j.msg) window._jusoErr=j.msg;
   }
   if(res&&res.none&&v.trim().length>=2){
     render({choose:[],why:["목록에 없는 명칭이라 지도에서 찾는 중…"]},v.trim());
     const o=await onlineLookup(v);
     if(o&&!o.err) res=o;
-    else res={none:true,why:[o&&o.err?"지도 검색에 연결하지 못했어요(인터넷 연결 또는 미리보기 화면 제한). 주소나 동 이름으로 입력해 주세요.":"지도에서도 찾지 못했어요. 정확한 명칭(예: 누원초등학교)이나 주소로 입력해 주세요."]};
+    else res={none:true,why:[o&&o.err?(window._jusoErr?"주소 검색 오류: "+esc(window._jusoErr)+" · ":"")+"지도 검색에 연결하지 못했어요(인터넷 연결 또는 미리보기 화면 제한). 동 이름을 함께 넣어 보세요 (예: 수유동 한일빌딩).":(window._jusoErr?"주소 검색 오류: "+esc(window._jusoErr)+" · ":"")+"찾지 못했어요. 동 이름을 함께 넣거나(예: 수유동 한일빌딩) 도로명 주소로 입력해 주세요."]};
   }
   if(res&&!res.addr){ const n=norm(v), a={}; const pm=parseMain(n), pg=parseGil(n), lm=findLandmark(v);
     if(pg){ const k=norm(pg.name); const mm=n.slice(n.indexOf(k)+k.length).match(/^(\d+(?:-\d+)?)/); a.road=pg.name+(mm?" "+mm[1]:""); }
