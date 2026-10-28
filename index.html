@@ -2,17 +2,17 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="5.5">
+<meta name="app-ver" content="5.6">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="출동구역">
+<meta name="apple-mobile-web-app-title" content="담당차량">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>출동차량 구역 조회</title>
+<title>구역별 담당차량 조회</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -200,7 +200,7 @@ header p{font-size:14.5px;margin-top:8px}
     <div class="topbar"><div class="eyebrow"><span class="s1">S-1</span>에스원 북서울지사</div>
       <div class="tools"><button type="button" class="tool" id="cpurl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1l-1 1"/><path d="M14 10a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1-1"/></svg><span>링크 복사</span></button>
       <button type="button" class="tool inst" id="inst" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span>앱 설치</span></button></div></div>
-    <h1>출동차량 구역 조회</h1>
+    <h1>구역별 담당차량 조회</h1>
     <p>주소·지번·건물명을 입력하면 담당 출동차량과 컨설턴트를 바로 찾아드려요.</p>
     <div class="legend" id="legend"></div>
   </header>
@@ -248,7 +248,7 @@ header p{font-size:14.5px;margin-top:8px}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.5 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 5.6 · 2026.10</footer>
 </div>
 
 <script>
@@ -792,7 +792,7 @@ $("splits").innerHTML=Object.entries(R).map(([dn,r])=>{
 // ── 링크 복사 · 웹앱 설치 ──
 const APP_URL="https://ijaesig04-hash.github.io/patrol/";
 function toast(t){const el=$("toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("on"),2200);}
-$("cpurl").onclick=async()=>{ try{ if(navigator.share&&/Android|iPhone|iPad/i.test(navigator.userAgent)){ await navigator.share({title:"출동차량 구역 조회",url:APP_URL}); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
+$("cpurl").onclick=async()=>{ try{ if(navigator.share&&/Android|iPhone|iPad/i.test(navigator.userAgent)){ await navigator.share({title:"구역별 담당차량 조회",url:APP_URL}); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
   try{ await navigator.clipboard.writeText(APP_URL); toast("링크를 복사했어요"); }
   catch(e){ const ta=document.createElement("textarea"); ta.value=APP_URL; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); toast("링크를 복사했어요");}catch(_){ prompt("아래 주소를 복사하세요",APP_URL);} ta.remove(); } };
 (function(){
