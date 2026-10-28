@@ -103,6 +103,13 @@ header h1,header p,.legend span,h3.sec,footer{color:#fff;text-shadow:0 1px 3px r
 header p,.legend span,footer{color:rgba(255,255,255,.88)}
 .search,.result,.zone,details.split,.keybox{background:var(--glass);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 
+.more{background:var(--glass,var(--panel));border:1px solid var(--line);border-radius:14px;padding:0 16px}
+.more>summary{cursor:pointer;padding:16px 0;font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::after{content:"펼치기 ▾";font-size:13px;color:var(--muted);font-weight:500}
+.more[open]>summary::after{content:"접기 ▴"}
+.more-in{display:flex;flex-direction:column;gap:22px;padding-bottom:16px}
+.more h3.sec{color:var(--muted);text-shadow:none}
 .keybox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 16px}
 .keybox summary{cursor:pointer;padding:14px 0;font-weight:700}
 .keybox .row{padding-bottom:10px}
@@ -139,6 +146,9 @@ header p,.legend span,footer{color:rgba(255,255,255,.88)}
 
   <section class="result" id="result" aria-live="polite"></section>
 
+  <details class="more">
+  <summary>구역 정보 · 설정 펼치기</summary>
+  <div class="more-in">
   <section>
     <h3 class="sec">구역별 담당 동</h3>
     <div class="zones" id="zones"></div>
@@ -163,8 +173,10 @@ header p,.legend span,footer{color:rgba(255,255,255,.88)}
             <li>큰길(도봉로·노해로·덕릉로·동일로 등)은 <b>건물번호 구간</b>으로 행정동을 찾아요. 목록 사이 번호는 가까운 구간으로 추정하고 "구간 추정"으로 표시돼요.</li>
     </ul>
   </section>
+  </div>
+  </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 2.7 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 2.8 · 2026.10</footer>
 </div>
 
 <script>
@@ -566,7 +578,7 @@ function render(res,raw){
     return;
   }
   const z=Z[res.zone];
-  el.innerHTML=`<div class="badge" style="--zc:${zv(res.zone)}"><div class="num">${z.v}</div><div class="zid">${res.zone==="OTHER"?"타 지사":res.zone}</div></div>
+  el.innerHTML=`<div class="badge" style="--zc:${zv(res.zone)}"><div class="num">${z.v}</div>${res.zone==="OTHER"?`<div class="zid">타 지사</div>`:""}</div>
    <div class="detail"><h2>${z.n}</h2><ul class="why"><li>입력: <b>${esc(raw)}</b></li>${res.why.map(w=>`<li>${w}</li>`).join("")}</ul>
    ${addrHtml(res)}<div>${res.flag?`<span class="pill warn">${res.flag}</span>`:`<span class="pill ok">자동 선택됨</span>`}</div>
    <button class="copy" type="button" id="cp">결과 복사</button></div>`;
@@ -659,13 +671,13 @@ $("q").addEventListener("keydown",e=>{if(e.key==="Enter"||e.keyCode===13){e.prev
 $("q").addEventListener("input",()=>{clearTimeout(_t);_t=setTimeout(()=>{const v=$("q").value;if(v.trim().length>=3){const r=lookup(v); if(r&&!r.none) render(r,v.trim());}},400)});
 
 // legend, examples
-$("legend").innerHTML=Object.entries(Z).map(([k,z])=>`<span><i style="background:${zv(k)}"></i>${z.v} ${k==="OTHER"?"":k}</span>`).join("");
+$("legend").innerHTML=Object.entries(Z).map(([k,z])=>`<span><i style="background:${zv(k)}"></i>${z.v}</span>`).join("");
 
 // zones
 $("zones").innerHTML=["Z1","Z2","Z3","Z4","Z5","OTHER"].map(k=>{
   const list=DONGS.filter(d=>d[2]===k).map(d=>`<button type="button" class="dchip${d[3]?" check":""}" data-q="${d[0]} ${d[1]}">${d[1]}</button>`);
   Object.entries(SPLIT_IN).forEach(([dn,zs])=>{if(zs.includes(k)) list.push(`<button type="button" class="dchip split" data-q="${dn}">${dn} 일부</button>`)});
-  return `<div class="zone" style="--zc:${zv(k)}"><div class="hd"><span class="v">${Z[k].v}</span><span class="id">${k}</span></div><div class="n">${Z[k].n}</div><div class="dlist">${list.join("")}</div></div>`;
+  return `<div class="zone" style="--zc:${zv(k)}"><div class="hd"><span class="v">${Z[k].v}</span></div><div class="n">${Z[k].n}</div><div class="dlist">${list.join("")}</div></div>`;
 }).join("");
 document.querySelectorAll(".dchip").forEach(b=>b.onclick=()=>{run(b.dataset.q);window.scrollTo({top:0,behavior:"smooth"})});
 
