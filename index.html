@@ -587,7 +587,7 @@ async function onlineLookup(raw){
 }
 // ── 행정안전부 도로명주소 검색 API (키가 있을 때) ──
 // 근무자 공용 주소 검색 키 (받으면 여기에 넣음)
-const DEFAULT_JUSO_KEY="";
+const DEFAULT_JUSO_KEY="U01TX0FVVEgyMDI2MTAyODE2MTkwNjEyMDg5Nzc=";
 const LS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 function jusoKey(){ return LS.get("jusoKey")||DEFAULT_JUSO_KEY; }
 function jusoSearch(q){ const key=jusoKey(); if(!key) return Promise.resolve(null);
