@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="6.5">
+<meta name="app-ver" content="6.6">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
@@ -250,7 +250,7 @@ header p{font-size:14.5px;margin-top:8px}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 6.5 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 6.6 · 2026.10</footer>
 </div>
 
 <script>
@@ -723,15 +723,17 @@ async function onlineLookup(raw){
 }
 // ── 행정안전부 도로명주소 검색 API (키가 있을 때) ──
 // 근무자 공용 주소 검색 키 (받으면 여기에 넣음)
-const DEFAULT_JUSO_KEY="devU01TX0FVVEgyMDI2MTAyOTExMDA0MzEyMDkwNzE="; // 도로명주소 검색 API 개발키 (2027-01-27까지)
+// 도로명주소 검색 API: 운영키 먼저, 안 되면 개발키(2027-01-27까지)로 자동 전환
+const JUSO_KEYS=["U01TX0FVVEgyMDI2MTAyOTExMjM1OTEyMDkwNzY=","devU01TX0FVVEgyMDI2MTAyOTExMDA0MzEyMDkwNzE="];
+const DEFAULT_JUSO_KEY=JUSO_KEYS[0];
 function keyNote(){ const el=document.getElementById("jkmsg"); if(el&&JUSO_BAD) el.textContent="주소 검색 키 상태: "+JUSO_BAD+" (승인되면 자동으로 다시 작동해요)"; }
 const LS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let JUSO_BAD=""; try{const b=sessionStorage.getItem("jusoBad")||""; if(b.startsWith(DEFAULT_JUSO_KEY+"|")) JUSO_BAD=b.slice(DEFAULT_JUSO_KEY.length+1); else sessionStorage.removeItem("jusoBad");}catch(e){}
-function jusoKey(){ if(JUSO_BAD) return ""; return LS.get("jusoKey")||DEFAULT_JUSO_KEY; }
+let JUSO_BAD="", BAD_KEYS={}; try{BAD_KEYS=JSON.parse(sessionStorage.getItem("jusoBadKeys")||"{}")}catch(e){} try{sessionStorage.removeItem("jusoBad")}catch(e){}
+function jusoKey(){ const ks=[LS.get("jusoKey"),...JUSO_KEYS].filter(Boolean); const k=ks.find(x=>!BAD_KEYS[x]); if(!k){ JUSO_BAD=Object.values(BAD_KEYS)[0]||""; return ""; } return k; }
 function jusoSearch(q){ const key=jusoKey(); if(!key) return Promise.resolve(null);
   return new Promise(res=>{ const cb="jcb"+Date.now()+Math.floor(Math.random()*1e4); const sc=document.createElement("script");
     const done=v=>{try{delete window[cb]}catch(e){} sc.remove(); res(v)}; const tm=setTimeout(()=>done({err:true}),7000);
-    window[cb]=d=>{clearTimeout(tm); const r=d&&d.results; if(!r||r.common.errorCode!=="0"){ const m=r&&r.common.errorMessage; if(m&&/KEY|승인|인증/i.test(m)){ JUSO_BAD=m; try{sessionStorage.setItem("jusoBad",DEFAULT_JUSO_KEY+"|"+m)}catch(e){} keyNote(); } return done({err:true,msg:m}); } done({list:r.juso||[]});};
+    window[cb]=d=>{clearTimeout(tm); const r=d&&d.results; if(!r||r.common.errorCode!=="0"){ const m=r&&r.common.errorMessage; if(m&&/KEY|승인|인증/i.test(m)){ BAD_KEYS[key]=m; try{sessionStorage.setItem("jusoBadKeys",JSON.stringify(BAD_KEYS))}catch(e){} if(jusoKey()){ return jusoSearch(q).then(done); } keyNote(); } return done({err:true,msg:m}); } done({list:r.juso||[]});};
     sc.onerror=()=>{clearTimeout(tm);done({err:true})};
     sc.src="https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do?confmKey="+encodeURIComponent(key)+"&currentPage=1&countPerPage=10&resultType=json&hstryYn=N&callback="+cb+"&keyword="+encodeURIComponent(q);
     document.head.appendChild(sc); }); }
