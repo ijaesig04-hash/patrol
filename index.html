@@ -2,7 +2,7 @@
 <html lang="ko" data-theme="light" style="color-scheme:light">
 <head>
 <meta charset="utf-8">
-<meta name="app-ver" content="6.6">
+<meta name="app-ver" content="6.7">
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#1f4fd1">
 <link rel="manifest" href="manifest.json">
@@ -250,7 +250,7 @@ header p{font-size:14.5px;margin-top:8px}
   </div>
   </details>
 
-  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 6.6 · 2026.10</footer>
+  <footer>기준: 지사 벽면 관리구역 지도의 빨간 경계선을 OpenStreetMap 행정동 경계와 맞춰 판정(오차 약 100m 이내) · 버전 6.7 · 2026.10</footer>
 </div>
 
 <script>
@@ -735,7 +735,7 @@ function jusoSearch(q){ const key=jusoKey(); if(!key) return Promise.resolve(nul
     const done=v=>{try{delete window[cb]}catch(e){} sc.remove(); res(v)}; const tm=setTimeout(()=>done({err:true}),7000);
     window[cb]=d=>{clearTimeout(tm); const r=d&&d.results; if(!r||r.common.errorCode!=="0"){ const m=r&&r.common.errorMessage; if(m&&/KEY|승인|인증/i.test(m)){ BAD_KEYS[key]=m; try{sessionStorage.setItem("jusoBadKeys",JSON.stringify(BAD_KEYS))}catch(e){} if(jusoKey()){ return jusoSearch(q).then(done); } keyNote(); } return done({err:true,msg:m}); } done({list:r.juso||[]});};
     sc.onerror=()=>{clearTimeout(tm);done({err:true})};
-    sc.src="https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do?confmKey="+encodeURIComponent(key)+"&currentPage=1&countPerPage=10&resultType=json&hstryYn=N&callback="+cb+"&keyword="+encodeURIComponent(q);
+    sc.src="https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do?confmKey="+encodeURIComponent(key)+"&currentPage=1&countPerPage=100&resultType=json&hstryYn=N&callback="+cb+"&keyword="+encodeURIComponent(q);
     document.head.appendChild(sc); }); }
 const AREA_GU=["도봉구","노원구","강북구","성북구","중랑구"];
 async function jusoLookup(raw){
@@ -754,7 +754,7 @@ async function jusoLookup(raw){
       if(!res||res.none||res.choose) { const r2=lookup(`${j.sggNm} ${j.hemdNm||""} ${j.rn} ${num}`); if(r2&&!r2.none&&(!res||res.none||(r2.zone&&res.choose))) res=r2; }
       if(!res||res.none) res=lookup(`${j.sggNm} ${j.emdNm} ${j.lnbrMnnm}${+j.lnbrSlno>0?"-"+j.lnbrSlno:""}`);
       out.push({j,res,addr:{road:j.roadAddr,jibun:j.jibunAddr,name:j.bdNm||""}});
-      if(out.length>=8) break; }
+      if(out.length>=12) break; }
     const ok=out.filter(o=>o.res&&!o.res.none);
     if(!ok.length) return {none:true,addr:out[0]&&out[0].addr,why:["주소는 찾았지만 구역 규칙에 없는 곳이에요."]};
     if(ok.length===1||new Set(ok.map(o=>o.res.zone||"?")).size===1&&ok[0].res.zone){
@@ -762,7 +762,7 @@ async function jusoLookup(raw){
     const ch=[];
     ok.forEach(o=>{ const label=`${o.j.bdNm?o.j.bdNm+" · ":""}${o.j.roadAddr.replace(/^서울특별시\s*/,"")}`;
       if(o.res.zone) ch.push([o.res.zone,label,o.addr]); else (o.res.choose||[]).forEach(c=>ch.push([c[0],label+" · "+c[1],o.addr])); });
-    return {choose:ch,addr:ok[0].addr,why:[`주소 검색: 같은 이름이 관할 안에 ${ok.length}곳 있어요. 맞는 곳을 골라주세요.`],flag:"위치 선택"};
+    return {choose:ch,why:[`주소 검색: 같은 이름이 관할 안에 ${ok.length}곳 있어요. 맞는 곳을 골라주세요.`],flag:"위치 선택"};
   }
   return null;
 }
@@ -783,7 +783,7 @@ async function search(){ clearTimeout(_t); const v=$("q").value; let res=lookup(
     if(o&&!o.err) res=o;
     else res={none:true,why:[o&&o.err?(JUSO_BAD?"건물명만으로 찾으려면 주소 검색 키 승인이 필요해요. · ":"")+"지도 검색에 연결하지 못했어요(인터넷 연결 또는 미리보기 화면 제한). 동 이름을 함께 넣어 보세요 (예: 수유동 한일빌딩).":(JUSO_BAD?"건물명만으로 찾으려면 주소 검색 키 승인이 필요해요. · ":"")+"찾지 못했어요. 동 이름을 함께 넣거나(예: 수유동 한일빌딩) 도로명 주소로 입력해 주세요."]};
   }
-  if(res&&!res.addr){ const n=norm(v), a={}; const pm=parseMain(n), pg=parseGil(n), lm=findLandmark(v);
+  if(res&&!res.addr&&!(res.choose&&res.choose.some(c=>c[2]))){ const n=norm(v), a={}; const pm=parseMain(n), pg=parseGil(n), lm=findLandmark(v);
     if(pg){ const k=norm(pg.name); const mm=n.slice(n.indexOf(k)+k.length).match(/^(\d+(?:-\d+)?)/); a.road=pg.name+(mm?" "+mm[1]:""); }
     else if(pm) a.road=pm.road+" "+pm.num;
     const lg=Object.keys(LEGAL).find(x=>n.includes(x));

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "구역별 담당차량 조회 (에스원 북서울지사)",
-    "version": "6.6",
+    "version": "6.7",
     "updated": "2026-10-29",
     "site": "https://ijaesig04-hash.github.io/patrol/",
     "source": "지사 벽면 관리구역 지도(빨간 경계선) 대조 + 사용자 현장 확인 + 도로명주소 목록(dorojuso.kr)",
